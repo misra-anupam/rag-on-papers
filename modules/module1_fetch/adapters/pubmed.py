@@ -2,10 +2,11 @@ import httpx
 from lxml import etree
 
 from shared.config import settings
+
 from .base import BaseAdapter, RateLimiter, make_retry
 
-ESEARCH = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
-EFETCH  = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
+ESEARCH = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+EFETCH = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
 
 class PubMedAdapter(BaseAdapter):
@@ -14,7 +15,7 @@ class PubMedAdapter(BaseAdapter):
         self._limiter = RateLimiter(rate)
 
     def _api_key_params(self) -> dict:
-        return {'api_key': settings.ncbi_api_key} if settings.ncbi_api_key else {}
+        return {"api_key": settings.ncbi_api_key} if settings.ncbi_api_key else {}
 
     @make_retry()
     async def search(self, query: str, max_results: int) -> list[str]:
@@ -23,13 +24,15 @@ class PubMedAdapter(BaseAdapter):
             resp = await client.get(
                 ESEARCH,
                 params={
-                    'db': 'pmc', 'term': query,
-                    'retmax': max_results, 'retmode': 'json',
+                    "db": "pmc",
+                    "term": query,
+                    "retmax": max_results,
+                    "retmode": "json",
                     **self._api_key_params(),
                 },
             )
             resp.raise_for_status()
-            return resp.json()['esearchresult']['idlist']
+            return list(resp.json()["esearchresult"]["idlist"])
 
     @make_retry()
     async def fetch(self, paper_id: str) -> bytes:
@@ -38,8 +41,10 @@ class PubMedAdapter(BaseAdapter):
             resp = await client.get(
                 EFETCH,
                 params={
-                    'db': 'pmc', 'id': paper_id,
-                    'rettype': 'xml', 'retmode': 'xml',
+                    "db": "pmc",
+                    "id": paper_id,
+                    "rettype": "xml",
+                    "retmode": "xml",
                     **self._api_key_params(),
                 },
             )
@@ -54,9 +59,9 @@ class PubMedAdapter(BaseAdapter):
     def extract_doi(xml_bytes: bytes) -> str | None:
         try:
             root = etree.fromstring(xml_bytes)
-            for elem in root.iter('article-id'):
-                if elem.get('pub-id-type') == 'doi' and elem.text:
-                    return elem.text.strip()
+            for elem in root.iter("article-id"):
+                if elem.get("pub-id-type") == "doi" and elem.text:
+                    return str(elem.text).strip()
         except etree.XMLSyntaxError:
             pass
         return None

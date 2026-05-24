@@ -3,10 +3,10 @@ import time
 from qdrant_client import QdrantClient
 from qdrant_client.models import NamedSparseVector, SparseVector
 
-from shared.observability import retrieval_latency
 from modules.module4_index.setup import COLLECTION, get_client
 from modules.module5_retrieve.base import BaseRetriever, RetrievalResult
 from modules.module5_retrieve.tag import build_filter
+from shared.observability import retrieval_latency
 
 
 class LexicalRetriever(BaseRetriever):
@@ -23,15 +23,15 @@ class LexicalRetriever(BaseRetriever):
         hits = self._client.search(
             collection_name=COLLECTION,
             query_vector=NamedSparseVector(
-                name='sparse',
-                vector=SparseVector(indices=sv['indices'], values=sv['values']),
+                name="sparse",
+                vector=SparseVector(indices=sv["indices"], values=sv["values"]),
             ),
             query_filter=build_filter(filters),
             limit=top_k,
             with_payload=True,
         )
-        retrieval_latency.labels(strategy='lexical').observe(time.perf_counter() - t0)
+        retrieval_latency.labels(strategy="lexical").observe(time.perf_counter() - t0)
         return [
-            RetrievalResult(str(h.id), h.score, h.payload or {}, i, 'lexical')
+            RetrievalResult(str(h.id), h.score, h.payload or {}, i, "lexical")
             for i, h in enumerate(hits)
         ]

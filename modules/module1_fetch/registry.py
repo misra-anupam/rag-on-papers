@@ -8,8 +8,8 @@ from shared.db import get_session
 def exists(doi: str) -> bool:
     with get_session() as session:
         row = session.execute(
-            text('SELECT 1 FROM paper_registry WHERE doi = :doi'),
-            {'doi': doi},
+            text("SELECT 1 FROM paper_registry WHERE doi = :doi"),
+            {"doi": doi},
         ).fetchone()
         return row is not None
 
@@ -19,7 +19,7 @@ def upsert(
     source: str,
     paper_id: str,
     s3_raw_key: str,
-    fetch_status: str = 'fetched',
+    fetch_status: str = "fetched",
     title: str | None = None,
     authors: list | None = None,
     journal: str | None = None,
@@ -41,16 +41,16 @@ def upsert(
                     updated_at       = NOW()
             """),
             {
-                'doi': doi,
-                'paper_id': paper_id,
-                'source': source,
-                'fetch_status': fetch_status,
-                's3_raw_key': s3_raw_key,
-                'title': title,
-                'authors': __import__('json').dumps(authors) if authors else None,
-                'journal': journal,
-                'pub_date': publication_date,
-                'mesh_terms': mesh_terms,
+                "doi": doi,
+                "paper_id": paper_id,
+                "source": source,
+                "fetch_status": fetch_status,
+                "s3_raw_key": s3_raw_key,
+                "title": title,
+                "authors": __import__("json").dumps(authors) if authors else None,
+                "journal": journal,
+                "pub_date": publication_date,
+                "mesh_terms": mesh_terms,
             },
         )
 
@@ -66,24 +66,24 @@ def update(
 ) -> None:
     fields: dict = {}
     if parse_status is not None:
-        fields['parse_status'] = parse_status
+        fields["parse_status"] = parse_status
     if embed_status is not None:
-        fields['embed_status'] = embed_status
+        fields["embed_status"] = embed_status
     if index_status is not None:
-        fields['index_status'] = index_status
+        fields["index_status"] = index_status
     if s3_parsed_key is not None:
-        fields['s3_parsed_key'] = s3_parsed_key
+        fields["s3_parsed_key"] = s3_parsed_key
     if title is not None:
-        fields['title'] = title
+        fields["title"] = title
     if mesh_terms is not None:
-        fields['mesh_terms'] = mesh_terms
+        fields["mesh_terms"] = mesh_terms
     if not fields:
         return
 
-    set_clause = ', '.join(f'{k} = :{k}' for k in fields)
-    fields['doi'] = doi
+    set_clause = ", ".join(f"{k} = :{k}" for k in fields)
+    fields["doi"] = doi
     with get_session() as session:
         session.execute(
-            text(f'UPDATE paper_registry SET {set_clause} WHERE doi = :doi'),
+            text(f"UPDATE paper_registry SET {set_clause} WHERE doi = :doi"),
             fields,
         )

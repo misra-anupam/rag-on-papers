@@ -12,7 +12,7 @@ def configure_logging() -> None:
         processors=[
             structlog.contextvars.merge_contextvars,
             structlog.processors.add_log_level,
-            structlog.processors.TimeStamper(fmt='iso'),
+            structlog.processors.TimeStamper(fmt="iso"),
             structlog.processors.StackInfoRenderer(),
             structlog.processors.JSONRenderer(),
         ],
@@ -23,8 +23,8 @@ def configure_logging() -> None:
     )
 
 
-def configure_tracing(service_name: str = 'rag-medical', otlp_endpoint: str = '') -> None:
-    resource = Resource.create({'service.name': service_name})
+def configure_tracing(service_name: str = "rag-medical", otlp_endpoint: str = "") -> None:
+    resource = Resource.create({"service.name": service_name})
     provider = TracerProvider(resource=resource)
     if otlp_endpoint:
         exporter = OTLPSpanExporter(endpoint=otlp_endpoint)
@@ -32,7 +32,7 @@ def configure_tracing(service_name: str = 'rag-medical', otlp_endpoint: str = ''
     trace.set_tracer_provider(provider)
 
 
-def get_tracer(name: str = 'rag-medical') -> trace.Tracer:
+def get_tracer(name: str = "rag-medical") -> trace.Tracer:
     return trace.get_tracer(name)
 
 
@@ -42,35 +42,23 @@ def start_metrics_server(port: int = 8000) -> None:
 
 # ── Prometheus metrics ────────────────────────────────────────────────────────
 
-papers_fetched = Counter(
-    'papers_fetched_total', 'Total papers fetched', ['source']
-)
-papers_parsed = Counter(
-    'papers_parsed_total', 'Total papers parsed', ['status']
-)
-chunks_indexed = Counter(
-    'chunks_indexed_total', 'Total chunks indexed into Qdrant'
-)
-embedding_latency = Histogram(
-    'embedding_latency_seconds', 'Dense embedding API latency'
-)
+papers_fetched = Counter("papers_fetched_total", "Total papers fetched", ["source"])
+papers_parsed = Counter("papers_parsed_total", "Total papers parsed", ["status"])
+chunks_indexed = Counter("chunks_indexed_total", "Total chunks indexed into Qdrant")
+embedding_latency = Histogram("embedding_latency_seconds", "Dense embedding API latency")
 retrieval_latency = Histogram(
-    'retrieval_latency_seconds', 'Retrieval latency per strategy', ['strategy']
+    "retrieval_latency_seconds", "Retrieval latency per strategy", ["strategy"]
 )
-rerank_latency = Histogram(
-    'rerank_latency_seconds', 'RRF + MMR rerank latency'
-)
-agent_run_latency = Histogram(
-    'agent_run_latency_seconds', 'Full CrewAI crew run latency'
-)
+rerank_latency = Histogram("rerank_latency_seconds", "RRF + MMR rerank latency")
+agent_run_latency = Histogram("agent_run_latency_seconds", "Full CrewAI crew run latency")
 openrouter_tokens = Counter(
-    'openrouter_tokens_total', 'OpenRouter tokens consumed', ['model', 'type']
+    "openrouter_tokens_total", "OpenRouter tokens consumed", ["model", "type"]
 )
 qdrant_collection_size = Gauge(
-    'qdrant_points_total', 'Current number of points in Qdrant collection'
+    "qdrant_points_total", "Current number of points in Qdrant collection"
 )
 figure_describe_latency = Histogram(
-    'figure_describe_latency_seconds', 'LLM figure description latency'
+    "figure_describe_latency_seconds", "LLM figure description latency"
 )
 
 

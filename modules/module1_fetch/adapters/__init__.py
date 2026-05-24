@@ -1,14 +1,19 @@
-from .pubmed import PubMedAdapter
-from .europepmc import EuropePMCAdapter
-from .semanticscholar import SemanticScholarAdapter
 from .biorxiv import BiorxivAdapter
+from .europepmc import EuropePMCAdapter
+from .pubmed import PubMedAdapter
+from .semanticscholar import SemanticScholarAdapter
 
 ADAPTERS = {
-    'pubmed':          PubMedAdapter(),
-    'europepmc':       EuropePMCAdapter(),
-    'semanticscholar': SemanticScholarAdapter(),
-    'biorxiv':         BiorxivAdapter(),
+    "pubmed": PubMedAdapter(),
+    "europepmc": EuropePMCAdapter(),
+    "semanticscholar": SemanticScholarAdapter(),
+    "biorxiv": BiorxivAdapter(),
 }
 
-__all__ = ['ADAPTERS', 'PubMedAdapter', 'EuropePMCAdapter',
-           'SemanticScholarAdapter', 'BiorxivAdapter']
+__all__ = [
+    "ADAPTERS",
+    "BiorxivAdapter",
+    "EuropePMCAdapter",
+    "PubMedAdapter",
+    "SemanticScholarAdapter",
+]

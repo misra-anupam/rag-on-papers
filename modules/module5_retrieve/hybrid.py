@@ -4,10 +4,10 @@ import time
 from qdrant_client import QdrantClient
 from qdrant_client.models import Fusion, FusionQuery, Prefetch, SparseVector
 
-from shared.observability import retrieval_latency
 from modules.module4_index.setup import COLLECTION, get_client
 from modules.module5_retrieve.base import BaseRetriever, RetrievalResult
 from modules.module5_retrieve.tag import build_filter
+from shared.observability import retrieval_latency
 
 
 class HybridRetriever(BaseRetriever):
@@ -22,24 +22,26 @@ class HybridRetriever(BaseRetriever):
 
         dv = asyncio.run(embed_texts([query]))[0]
         sv = generate_sparse_vectors([query])[0]
-        f  = build_filter(filters)
+        f = build_filter(filters)
 
         t0 = time.perf_counter()
         hits = self._client.query_points(
             collection_name=COLLECTION,
             prefetch=[
-                Prefetch(query=dv,  using='dense',  limit=top_k, filter=f),
+                Prefetch(query=dv, using="dense", limit=top_k, filter=f),
                 Prefetch(
-                    query=SparseVector(indices=sv['indices'], values=sv['values']),
-                    using='sparse', limit=top_k, filter=f,
+                    query=SparseVector(indices=sv["indices"], values=sv["values"]),
+                    using="sparse",
+                    limit=top_k,
+                    filter=f,
                 ),
             ],
             query=FusionQuery(fusion=Fusion.RRF),
             limit=top_k,
             with_payload=True,
         )
-        retrieval_latency.labels(strategy='hybrid').observe(time.perf_counter() - t0)
+        retrieval_latency.labels(strategy="hybrid").observe(time.perf_counter() - t0)
         return [
-            RetrievalResult(str(h.id), h.score, h.payload or {}, i, 'hybrid')
+            RetrievalResult(str(h.id), h.score, h.payload or {}, i, "hybrid")
             for i, h in enumerate(hits.points)
         ]

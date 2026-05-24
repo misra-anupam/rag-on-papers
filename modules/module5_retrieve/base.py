@@ -5,9 +5,9 @@ from dataclasses import dataclass
 @dataclass
 class RetrievalResult:
     chunk_id: str
-    score:    float
-    payload:  dict
-    rank:     int
+    score: float
+    payload: dict
+    rank: int
     strategy: str  # semantic | lexical | hybrid | tag
 
 

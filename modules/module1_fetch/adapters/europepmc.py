@@ -3,7 +3,7 @@ import httpx
 from .base import BaseAdapter, make_retry
 from .unpaywall import UnpaywallAdapter
 
-SEARCH_URL = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search'
+SEARCH_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 
 
 class EuropePMCAdapter(BaseAdapter):
@@ -16,13 +16,15 @@ class EuropePMCAdapter(BaseAdapter):
             resp = await client.get(
                 SEARCH_URL,
                 params={
-                    'query': query, 'format': 'json',
-                    'pageSize': max_results, 'resultType': 'core',
+                    "query": query,
+                    "format": "json",
+                    "pageSize": max_results,
+                    "resultType": "core",
                 },
             )
             resp.raise_for_status()
-            results = resp.json().get('resultList', {}).get('result', [])
-            return [r['id'] for r in results if 'id' in r]
+            results = resp.json().get("resultList", {}).get("result", [])
+            return [r["id"] for r in results if "id" in r]
 
     @make_retry()
     async def fetch(self, paper_id: str) -> bytes:
@@ -31,21 +33,23 @@ class EuropePMCAdapter(BaseAdapter):
             resp = await client.get(
                 SEARCH_URL,
                 params={
-                    'query': f'EXT_ID:{paper_id}', 'format': 'json',
-                    'pageSize': 1, 'resultType': 'core',
+                    "query": f"EXT_ID:{paper_id}",
+                    "format": "json",
+                    "pageSize": 1,
+                    "resultType": "core",
                 },
             )
             resp.raise_for_status()
-            results = resp.json().get('resultList', {}).get('result', [])
+            results = resp.json().get("resultList", {}).get("result", [])
             if not results:
-                raise ValueError(f'No record found for Europe PMC id {paper_id}')
+                raise ValueError(f"No record found for Europe PMC id {paper_id}")
             record = results[0]
 
         # Try to get an open-access PDF URL
         pdf_url = None
-        for link in record.get('fullTextUrlList', {}).get('fullTextUrl', []):
-            if link.get('availabilityCode') == 'OA' and link.get('documentStyle') == 'pdf':
-                pdf_url = link.get('url')
+        for link in record.get("fullTextUrlList", {}).get("fullTextUrl", []):
+            if link.get("availabilityCode") == "OA" and link.get("documentStyle") == "pdf":
+                pdf_url = link.get("url")
                 break
 
         if pdf_url:
@@ -56,6 +60,7 @@ class EuropePMCAdapter(BaseAdapter):
 
         # Fall back to JSON record bytes if no PDF available
         import json
+
         return json.dumps(record).encode()
 
     async def resolve_doi(self, paper_id: str) -> str | None:
@@ -63,13 +68,16 @@ class EuropePMCAdapter(BaseAdapter):
             resp = await client.get(
                 SEARCH_URL,
                 params={
-                    'query': f'EXT_ID:{paper_id}', 'format': 'json',
-                    'pageSize': 1, 'resultType': 'core',
+                    "query": f"EXT_ID:{paper_id}",
+                    "format": "json",
+                    "pageSize": 1,
+                    "resultType": "core",
                 },
             )
             if resp.status_code != 200:
                 return None
-            results = resp.json().get('resultList', {}).get('result', [])
+            results = resp.json().get("resultList", {}).get("result", [])
             if results:
-                return results[0].get('doi')
+                doi = results[0].get("doi")
+                return str(doi) if doi else None
         return None

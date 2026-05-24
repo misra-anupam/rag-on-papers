@@ -1,5 +1,5 @@
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Generator
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
@@ -36,7 +36,7 @@ def get_session() -> Generator[Session, None, None]:
 def check_connection() -> bool:
     try:
         with engine.connect() as conn:
-            conn.execute(text('SELECT 1'))
+            conn.execute(text("SELECT 1"))
         return True
     except Exception:
         return False
