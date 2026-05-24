@@ -1,6 +1,4 @@
-import pytest
-
-SAMPLE_PMC_XML = b'''<?xml version="1.0"?>
+SAMPLE_PMC_XML = b"""<?xml version="1.0"?>
 <article>
   <front>
     <journal-meta>
@@ -37,33 +35,37 @@ SAMPLE_PMC_XML = b'''<?xml version="1.0"?>
       <p>We used a cohort of 4218 patients.</p>
     </sec>
   </body>
-</article>'''
+</article>"""
 
 
 def test_pmc_doi():
     from modules.module1b_parse.pmc_parser import parse_pmc_xml
+
     result = parse_pmc_xml(SAMPLE_PMC_XML)
-    assert result['doi'] == '10.2337/dc23-0441'
+    assert result["doi"] == "10.2337/dc23-0441"
 
 
 def test_pmc_title():
     from modules.module1b_parse.pmc_parser import parse_pmc_xml
+
     result = parse_pmc_xml(SAMPLE_PMC_XML)
-    assert 'Metformin' in result['title']
+    assert "Metformin" in result["title"]
 
 
 def test_pmc_pub_date():
     from modules.module1b_parse.pmc_parser import parse_pmc_xml
+
     result = parse_pmc_xml(SAMPLE_PMC_XML)
-    assert result['pub_date'].startswith('2023')
+    assert result["pub_date"].startswith("2023")
 
 
 def test_pmc_sections():
     from modules.module1b_parse.pmc_parser import parse_pmc_xml
+
     result = parse_pmc_xml(SAMPLE_PMC_XML)
-    headings = [s['heading'] for s in result['sections']]
-    assert 'Introduction' in headings
-    assert 'Methods' in headings
+    headings = [s["heading"] for s in result["sections"]]
+    assert "Introduction" in headings
+    assert "Methods" in headings
 
 
 def test_pmc_schema_matches_tei():
@@ -76,6 +78,6 @@ def test_pmc_schema_matches_tei():
     tei_result = parse_tei(SAMPLE_TEI)
 
     assert set(pmc_result.keys()) == set(tei_result.keys()), (
-        f'Schema mismatch. PMC extra: {set(pmc_result.keys()) - set(tei_result.keys())}, '
-        f'TEI extra: {set(tei_result.keys()) - set(pmc_result.keys())}'
+        f"Schema mismatch. PMC extra: {set(pmc_result.keys()) - set(tei_result.keys())}, "
+        f"TEI extra: {set(tei_result.keys()) - set(pmc_result.keys())}"
     )
