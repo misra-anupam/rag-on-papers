@@ -1,0 +1,68 @@
+site_name: RAG on Papers
+site_description: Production-grade RAG system for medical research papers
+site_author: misra-anupam
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.integrate
+    - content.code.annotate
+    - content.code.copy
+    - search.highlight
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Overview: index.md
+  - Shared Infrastructure: shared.md
+  - Modules:
+    - "Module 1 — Fetch": modules/module1-fetch.md
+    - "Module 1b — Parse": modules/module1b-parse.md
+    - "Module 2 — Chunk": modules/module2-chunk.md
+    - "Module 3 — Embed": modules/module3-embed.md
+    - "Module 4 — Index": modules/module4-index.md
+    - "Module 5 — Retrieve": modules/module5-retrieve.md
+    - "Module 6 — Rerank": modules/module6-rerank.md
+    - "Module 7 — Agent": modules/module7-agent.md
+    - "Module 8 — Eval": modules/module8-eval.md
