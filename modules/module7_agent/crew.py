@@ -1,7 +1,8 @@
 import time
 
 import structlog
-from crewai import LLM, Agent, Crew, Process, Task
+from crewai import Agent, Crew, Process, Task
+from crewai.llm import LLM
 
 from modules.module7_agent.tools import multi_hop_retrieve_tool, retrieve_tool
 from shared.config import settings

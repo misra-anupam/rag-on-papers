@@ -5,6 +5,7 @@ from qdrant_client.models import (
     Distance,
     HnswConfigDiff,
     PayloadSchemaType,
+    ScalarQuantization,
     ScalarQuantizationConfig,
     ScalarType,
     SparseVectorParams,
@@ -46,10 +47,12 @@ def create_collection(client: QdrantClient | None = None) -> None:
                     ef_construct=200,
                     full_scan_threshold=10_000,
                 ),
-                quantization_config=ScalarQuantizationConfig(
-                    type=ScalarType.INT8,
-                    quantile=0.99,
-                    always_ram=True,
+                quantization_config=ScalarQuantization(
+                    scalar=ScalarQuantizationConfig(
+                        type=ScalarType.INT8,
+                        quantile=0.99,
+                        always_ram=True,
+                    ),
                 ),
             )
         },

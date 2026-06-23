@@ -1,7 +1,7 @@
 import time
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import NamedSparseVector, SparseVector
+from qdrant_client.models import SparseVector
 
 from modules.module4_index.setup import COLLECTION, get_client
 from modules.module5_retrieve.base import BaseRetriever, RetrievalResult
@@ -20,12 +20,10 @@ class LexicalRetriever(BaseRetriever):
 
         sv = generate_sparse_vectors([query])[0]
         t0 = time.perf_counter()
-        hits = self._client.search(
+        hits = self._client.query_points(
             collection_name=COLLECTION,
-            query_vector=NamedSparseVector(
-                name="sparse",
-                vector=SparseVector(indices=sv["indices"], values=sv["values"]),
-            ),
+            query=SparseVector(indices=sv["indices"], values=sv["values"]),
+            using="sparse",
             query_filter=build_filter(filters),
             limit=top_k,
             with_payload=True,
@@ -33,5 +31,5 @@ class LexicalRetriever(BaseRetriever):
         retrieval_latency.labels(strategy="lexical").observe(time.perf_counter() - t0)
         return [
             RetrievalResult(str(h.id), h.score, h.payload or {}, i, "lexical")
-            for i, h in enumerate(hits)
+            for i, h in enumerate(hits.points)
         ]

@@ -32,7 +32,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ../shared/migrations:/docker-entrypoint-initdb.d
+      - ./shared/migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U rag -d rag_registry']
       interval: 10s
@@ -40,14 +40,15 @@ services:
       retries: 5
 
   qdrant:
-    image: qdrant/qdrant:v1.9.0
+    image: qdrant/qdrant:v1.12.5
     ports:
       - '6333:6333'
       - '6334:6334'
     volumes:
       - qdrant_data:/qdrant/storage
     healthcheck:
-      test: ['CMD-SHELL', 'curl -sf http://localhost:6333/healthz || exit 1']
+      # qdrant image ships bash but no curl/wget; use a /dev/tcp port check
+      test: ['CMD-SHELL', 'bash -c "exec 3<>/dev/tcp/localhost/6333" || exit 1']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -100,10 +101,10 @@ services:
 
   celery_worker:
     build:
-      context: ..
+      context: .
       dockerfile: docker/Dockerfile
     command: celery -A shared.celery_app worker --loglevel=info --concurrency=4
-    env_file: ../.env
+    env_file: .env
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -111,21 +112,21 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
-      grobid:
-        condition: service_healthy
+      # grobid is amd64-only and crashes under emulation on arm64 (tini /
+      # PR_SET_CHILD_SUBREAPER); don't block the worker on it.
       qdrant:
         condition: service_healthy
       minio_createbucket:
         condition: service_completed_successfully
     volumes:
-      - ..:/app
+      - .:/app
 
   celery_beat:
     build:
-      context: ..
+      context: .
       dockerfile: docker/Dockerfile
     command: celery -A shared.celery_app beat --loglevel=info --scheduler celery.beat:PersistentScheduler
-    env_file: ../.env
+    env_file: .env
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -134,7 +135,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ..:/app
+      - .:/app
 
   prometheus:
     image: prom/prometheus:latest
@@ -178,7 +179,7 @@ services:
       - loki
 
   mlflow:
-    image: ghcr.io/mlflow/mlflow:v2.14.1
+    image: ghcr.io/mlflow/mlflow:v3.13.0
     ports:
       - '5000:5000'
     command: >
