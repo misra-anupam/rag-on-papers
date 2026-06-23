@@ -769,7 +769,7 @@ from qdrant_client.models import (
     PayloadSchemaType,
 )
 
-client     = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+client     = QdrantClient(url=QDRANT_URL) #, api_key=QDRANT_API_KEY)
 COLLECTION = 'medical_papers'
 
 def create_collection():
@@ -1548,7 +1548,7 @@ volumes:
 | `CELERY_BROKER_URL` | 1–4 | `amqp://guest:guest@rabbitmq:5672//` |
 | `CELERY_RESULT_BACKEND` | 1–4 | `redis://redis:6379/0` |
 | `QDRANT_URL` | 4, 5, 6 | e.g. `http://qdrant:6333` |
-| `QDRANT_API_KEY` | 4, 5, 6 | Leave empty for local Docker; set for Qdrant Cloud |
+<!-- | `QDRANT_API_KEY` | 4, 5, 6 | Leave empty for local Docker; set for Qdrant Cloud | -->
 | `GROBID_URL` | 1b | e.g. `http://grobid:8070` |
 | `MLFLOW_TRACKING_URI` | 8 | e.g. `http://mlflow:5000` |
 | `POSTGRES_PASSWORD` | docker-compose | PostgreSQL password |

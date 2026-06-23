@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
     aws_region: str = "us-east-1"
+    # Set to a MinIO endpoint (e.g. http://minio:9000) for local testing; leave
+    # empty to use real AWS S3.
+    s3_endpoint_url: str = ""
 
     # PostgreSQL
     database_url: str = "postgresql://rag:changeme@localhost:5432/rag_registry"
@@ -27,7 +30,7 @@ class Settings(BaseSettings):
 
     # Qdrant
     qdrant_url: str = "http://localhost:6333"
-    qdrant_api_key: str = ""
+    # qdrant_api_key: str = ""
 
     # Grobid
     grobid_url: str = "http://localhost:8070"

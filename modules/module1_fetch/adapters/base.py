@@ -21,7 +21,7 @@ def make_retry(max_attempts: int = 5):
 
 
 class RateLimiter:
-    """Simple async token-bucket rate limiter."""
+    """Simple async leaky-bucket rate limiter — enforces a strict minimum interval between calls with no burst capacity."""
 
     def __init__(self, rate: float) -> None:
         self._min_interval = 1.0 / rate

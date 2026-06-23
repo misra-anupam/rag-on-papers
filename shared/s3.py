@@ -1,13 +1,18 @@
 import boto3
+from botocore.client import Config
 from botocore.exceptions import ClientError
 
 from shared.config import settings
 
+# When s3_endpoint_url is set (e.g. a local MinIO instance) boto3 talks to it
+# instead of AWS. MinIO requires path-style addressing.
 _client = boto3.client(
     "s3",
     aws_access_key_id=settings.aws_access_key_id,
     aws_secret_access_key=settings.aws_secret_access_key,
     region_name=settings.aws_region,
+    endpoint_url=settings.s3_endpoint_url or None,
+    config=Config(s3={"addressing_style": "path"}) if settings.s3_endpoint_url else None,
 )
 
 BUCKET = settings.aws_bucket_name

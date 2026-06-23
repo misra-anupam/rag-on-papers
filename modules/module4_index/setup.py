@@ -21,7 +21,7 @@ COLLECTION = "medical_papers"
 def get_client() -> QdrantClient:
     return QdrantClient(
         url=settings.qdrant_url,
-        api_key=settings.qdrant_api_key or None,
+        # api_key=settings.qdrant_api_key or None,
     )
 
 
