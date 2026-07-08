@@ -1,7 +1,7 @@
 import asyncio
 
 import httpx
-from crewai.tools import tool
+from langchain_core.tools import tool
 
 from modules.module5_retrieve import get_retriever
 from modules.module6_rerank.pipeline import rerank

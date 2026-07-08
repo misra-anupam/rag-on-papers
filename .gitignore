@@ -4,7 +4,9 @@ __pycache__/
 *.egg-info/
 dist/
 .venv/
+.venv_rag_on_papers/
 venv/
+.DS_Store
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
@@ -15,3 +17,7 @@ celerybeat-schedule
 celerybeat.pid
 *.log
 site/
+
+# Notebook real-data cache (fetched papers, embeddings)
+notebooks/data/
+.ipynb_checkpoints/

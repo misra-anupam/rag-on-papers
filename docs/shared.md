@@ -45,7 +45,7 @@ Pydantic `BaseSettings` loaded from environment / `.env` file.
 | AWS | `aws_access_key_id`, `aws_secret_access_key`, `aws_region`, `s3_bucket` |
 | PostgreSQL | `database_url` |
 | Redis/RabbitMQ | `redis_url`, `amqp_url` |
-| Qdrant | `qdrant_url`, `qdrant_api_key` |
+<!-- | Qdrant | `qdrant_url`, `qdrant_api_key` | -->
 | Grobid | `grobid_url` |
 | MLflow | `mlflow_tracking_uri` |
 

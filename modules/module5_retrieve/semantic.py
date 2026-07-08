@@ -20,9 +20,10 @@ class SemanticRetriever(BaseRetriever):
 
         query_vec = asyncio.run(embed_texts([query]))[0]
         t0 = time.perf_counter()
-        hits = self._client.search(
+        hits = self._client.query_points(
             collection_name=COLLECTION,
-            query_vector=("dense", query_vec),
+            query=query_vec,
+            using="dense",
             query_filter=build_filter(filters),
             limit=top_k,
             with_payload=True,
@@ -30,5 +31,5 @@ class SemanticRetriever(BaseRetriever):
         retrieval_latency.labels(strategy="semantic").observe(time.perf_counter() - t0)
         return [
             RetrievalResult(str(h.id), h.score, h.payload or {}, i, "semantic")
-            for i, h in enumerate(hits)
+            for i, h in enumerate(hits.points)
         ]
