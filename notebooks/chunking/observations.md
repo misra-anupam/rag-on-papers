@@ -15,8 +15,12 @@ Factors by decreasing importance
     - Fixed size / recursive delimiter
         Generally the best approach when diverse types of docs are involved.
 
+    - Parent-child from LlamaIndex
+
 
 2. Chunk size
+
+    Chunk size should match application use-case. Q&A -> smaller chunks; Summarization -> larger chunks
 
     - Small size (<256 tokens)
         Works best for fact based questions. Risk of losing surrounding context.
